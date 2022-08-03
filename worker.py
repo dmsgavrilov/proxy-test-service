@@ -1,3 +1,4 @@
+import os
 import time
 import datetime
 
@@ -7,7 +8,14 @@ import queue
 
 import logging
 
-logging.basicConfig(filename=f"logs/{datetime.datetime.now()}.log", level=logging.INFO)
+logs_dir = "logs"
+
+try:
+    os.mkdir(logs_dir)
+except FileExistsError:
+    pass
+
+logging.basicConfig(filename=f"{logs_dir}/{datetime.datetime.now()}.log", level=logging.INFO)
 
 
 class Worker:
@@ -17,7 +25,7 @@ class Worker:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((proxy_host, proxy_port))
 
-        # It's better to be done as separated server,
+        # It's better to be done as separated service,
         # but here it is made as part of client
         # (will be changed in future with normal queue)
         self.work_queue = queue.LifoQueue()
